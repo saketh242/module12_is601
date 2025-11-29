@@ -2,9 +2,16 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone, timedelta
 from uuid import UUID
 from typing import List
-from fastapi import Body, FastAPI, Depends, HTTPException, status
+
+from fastapi import Body, FastAPI, Depends, HTTPException, status, Request, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
 from sqlalchemy.orm import Session
+
+import uvicorn
 
 from app.auth.dependencies import get_current_active_user
 from app.models.calculation import Calculation
@@ -13,6 +20,7 @@ from app.schemas.calculation import CalculationBase, CalculationResponse, Calcul
 from app.schemas.token import TokenResponse
 from app.schemas.user import UserCreate, UserResponse, UserLogin
 from app.database import Base, get_db, engine
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -27,10 +35,32 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/", response_class=HTMLResponse, tags=["web"])
+def read_index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/login", response_class=HTMLResponse, tags=["web"])
+def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@app.get("/register", response_class=HTMLResponse, tags=["web"])
+def register_page(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
+
+
+@app.get("/dashboard", response_class=HTMLResponse, tags=["web"])
+def dashboard_page(request: Request):
+    return templates.TemplateResponse("dashboard.html", {"request": request})
+
 
 @app.get("/health", tags=["health"])
 def read_health():
     return {"status": "ok"}
+
 
 @app.post(
     "/auth/register", 
@@ -39,6 +69,7 @@ def read_health():
     tags=["auth"]
 )
 def register(user_create: UserCreate, db: Session = Depends(get_db)):
+
     user_data = user_create.dict(exclude={"confirm_password"})
     try:
         user = User.register(db, user_data)
@@ -48,6 +79,7 @@ def register(user_create: UserCreate, db: Session = Depends(get_db)):
     except ValueError as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
 
 @app.post("/auth/login", response_model=TokenResponse, tags=["auth"])
 def login_json(user_login: UserLogin, db: Session = Depends(get_db)):
@@ -61,7 +93,7 @@ def login_json(user_login: UserLogin, db: Session = Depends(get_db)):
         )
 
     user = auth_result["user"]
-    db.commit() 
+    db.commit()
 
     expires_at = auth_result.get("expires_at")
     if expires_at and expires_at.tzinfo is None:
@@ -85,7 +117,6 @@ def login_json(user_login: UserLogin, db: Session = Depends(get_db)):
 
 @app.post("/auth/token", tags=["auth"])
 def login_form(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    """Login with form data for Swagger UI"""
     auth_result = User.authenticate(db, form_data.username, form_data.password)
     if auth_result is None:
         raise HTTPException(
@@ -99,6 +130,7 @@ def login_form(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = D
         "token_type": "bearer"
     }
 
+
 @app.post(
     "/calculations",
     response_model=CalculationResponse,
@@ -110,6 +142,7 @@ def create_calculation(
     current_user = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
+    
     try:
         new_calculation = Calculation.create(
             calculation_type=calculation_data.type,
@@ -201,6 +234,7 @@ def delete_calculation(
     db.delete(calculation)
     db.commit()
     return None
+
 
 if __name__ == "__main__":
     import uvicorn
