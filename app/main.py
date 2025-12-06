@@ -51,10 +51,17 @@ def login_page(request: Request):
 def register_page(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
 
-
 @app.get("/dashboard", response_class=HTMLResponse, tags=["web"])
 def dashboard_page(request: Request):
     return templates.TemplateResponse("dashboard.html", {"request": request})
+
+@app.get("/view-calculation", response_class=HTMLResponse, tags=["web"])
+def view_calculation_page(request: Request):
+    return templates.TemplateResponse("view_calculation.html", {"request": request})
+
+@app.get("/edit-calculation", response_class=HTMLResponse, tags=["web"])
+def edit_calculation_page(request: Request):
+    return templates.TemplateResponse("edit_calculation.html", {"request": request})
 
 
 @app.get("/health", tags=["health"])
@@ -207,9 +214,13 @@ def update_calculation(
     if not calculation:
         raise HTTPException(status_code=404, detail="Calculation not found.")
 
+    if calculation_update.type is not None:
+        calculation.type = calculation_update.type
     if calculation_update.inputs is not None:
         calculation.inputs = calculation_update.inputs
-        calculation.result = calculation.get_result()
+    
+    # Recalculate result if type or inputs changed
+    calculation.result = calculation.get_result()
     calculation.updated_at = datetime.utcnow()
     db.commit()
     db.refresh(calculation)

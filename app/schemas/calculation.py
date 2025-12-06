@@ -75,6 +75,11 @@ class CalculationCreate(CalculationBase):
     )
 
 class CalculationUpdate(BaseModel):
+    type: Optional[CalculationType] = Field(
+        None,
+        description="Updated type of calculation",
+        example="addition"
+    )
     inputs: Optional[List[float]] = Field(
         None,
         description="Updated list of numeric inputs for the calculation",
@@ -82,15 +87,28 @@ class CalculationUpdate(BaseModel):
         min_items=2
     )
 
+    @field_validator("type", mode="before")
+    @classmethod
+    def validate_type(cls, v):
+        if v is None:
+            return v
+        allowed = {e.value for e in CalculationType}
+        if not isinstance(v, str) or v.lower() not in allowed:
+            raise ValueError(f"Type must be one of: {', '.join(sorted(allowed))}")
+        return v.lower()
+
     @model_validator(mode='after')
     def validate_inputs(self) -> "CalculationUpdate":
         if self.inputs is not None and len(self.inputs) < 2:
             raise ValueError("At least two numbers are required for calculation")
+        if self.type == CalculationType.DIVISION and self.inputs is not None:
+            if any(x == 0 for x in self.inputs[1:]):
+                raise ValueError("Cannot divide by zero")
         return self
 
     model_config = ConfigDict(
         from_attributes=True,
-        json_schema_extra={"example": {"inputs": [42, 7]}}
+        json_schema_extra={"example": {"type": "addition", "inputs": [42, 7]}}
     )
 
 class CalculationResponse(CalculationBase):

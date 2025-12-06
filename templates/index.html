@@ -1,8 +1,174 @@
 {% extends "layout.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Home - NumeriLogic{% endblock %}
 
 {% block content %}
-<h2>Welcome to the Calculations App</h2>
-<p>Please login or register to start using the application.</p>
+<div class="space-y-0">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-20 sm:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex justify-center mb-6">
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur">
+                        <i class="fas fa-calculator text-5xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-5xl sm:text-6xl font-bold mb-6">Welcome to NumeriLogic</h1>
+                <p class="text-xl sm:text-2xl mb-8 text-indigo-100">Your Advanced Calculation Management Platform</p>
+                <p class="text-lg mb-12 text-indigo-100 max-w-2xl mx-auto">
+                    Perform complex calculations, track your computation history, and gain insights from your mathematical operations.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{{ url_for('login_page') }}" class="inline-block bg-white text-indigo-600 px-8 py-3 rounded-lg font-bold hover:bg-indigo-50 transition transform hover:scale-105">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                    </a>
+                    <a href="{{ url_for('register_page') }}" class="inline-block bg-indigo-700 hover:bg-indigo-800 text-white px-8 py-3 rounded-lg font-bold transition transform hover:scale-105">
+                        <i class="fas fa-user-plus mr-2"></i>Create Account
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 sm:py-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-16 text-gray-800">Powerful Features</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition transform hover:-translate-y-1">
+                    <div class="bg-indigo-100 rounded-lg p-4 w-16 mb-4">
+                        <i class="fas fa-plus-circle text-indigo-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Multiple Operations</h3>
+                    <p class="text-gray-600">
+                        Perform addition, subtraction, multiplication, and division operations with precision and ease.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition transform hover:-translate-y-1">
+                    <div class="bg-blue-100 rounded-lg p-4 w-16 mb-4">
+                        <i class="fas fa-history text-blue-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Calculation History</h3>
+                    <p class="text-gray-600">
+                        Keep track of all your calculations with timestamps and easy access to your computation history.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition transform hover:-translate-y-1">
+                    <div class="bg-purple-100 rounded-lg p-4 w-16 mb-4">
+                        <i class="fas fa-shield-alt text-purple-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Secure & Private</h3>
+                    <p class="text-gray-600">
+                        Your calculations and personal data are encrypted and protected with enterprise-grade security.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition transform hover:-translate-y-1">
+                    <div class="bg-green-100 rounded-lg p-4 w-16 mb-4">
+                        <i class="fas fa-mobile-alt text-green-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Responsive Design</h3>
+                    <p class="text-gray-600">
+                        Access NumeriLogic from any device - desktop, tablet, or mobile, with full functionality.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition transform hover:-translate-y-1">
+                    <div class="bg-yellow-100 rounded-lg p-4 w-16 mb-4">
+                        <i class="fas fa-bolt text-yellow-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">Fast & Reliable</h3>
+                    <p class="text-gray-600">
+                        Lightning-fast calculations with 99.9% uptime guarantee and real-time result processing.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition transform hover:-translate-y-1">
+                    <div class="bg-pink-100 rounded-lg p-4 w-16 mb-4">
+                        <i class="fas fa-users text-pink-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800">User-Friendly</h3>
+                    <p class="text-gray-600">
+                        Simple and intuitive interface designed for users of all technical skill levels.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-20 sm:py-28 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-16 text-gray-800">How It Works</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Step 1 -->
+                <div class="text-center">
+                    <div class="bg-indigo-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        1
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Create Account</h3>
+                    <p class="text-gray-600">
+                        Sign up for a free NumeriLogic account in seconds.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="text-center">
+                    <div class="bg-blue-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        2
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Enter Calculations</h3>
+                    <p class="text-gray-600">
+                        Input your numbers and select the operation type.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="text-center">
+                    <div class="bg-purple-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        3
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Get Results</h3>
+                    <p class="text-gray-600">
+                        Instant accurate results with detailed information.
+                    </p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="text-center">
+                    <div class="bg-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        4
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Track History</h3>
+                    <p class="text-gray-600">
+                        View and manage your entire calculation history.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="py-20 sm:py-28 bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold mb-6">Ready to Get Started?</h2>
+            <p class="text-xl mb-8 text-indigo-100">
+                Join thousands of users who trust NumeriLogic for their calculation needs.
+            </p>
+            <a href="{{ url_for('register_page') }}" class="inline-block bg-white text-indigo-600 px-8 py-4 rounded-lg font-bold hover:bg-indigo-50 transition transform hover:scale-105 text-lg">
+                <i class="fas fa-rocket mr-2"></i>Get Started Now
+            </a>
+        </div>
+    </section>
+</div>
 {% endblock %}

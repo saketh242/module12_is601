@@ -2,29 +2,115 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Calculations App{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NumeriLogic{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
     {% block head %}{% endblock %}
 </head>
-<body>
-    <header>
-        <h1>Calculations App</h1>
-        <nav>
-            <a href="{{ url_for('read_index') }}">Home</a>
-            <a href="{{ url_for('login_page') }}">Login</a>
-            <a href="{{ url_for('register_page') }}">Register</a>
-        </nav>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100">
+    <!-- Navigation Header -->
+    <header class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-3">
+                    <a href="{{ url_for('read_index') }}" class="flex items-center space-x-2 hover:opacity-80 transition">
+                        <div class="bg-white rounded-lg p-2">
+                            <i class="fas fa-calculator text-indigo-600 text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold hidden sm:inline">NumeriLogic</span>
+                    </a>
+                </div>
+                
+                <!-- Main Navigation -->
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="{{ url_for('read_index') }}" class="hover:opacity-80 transition font-medium">Home</a>
+                    <a href="{{ url_for('login_page') }}" class="hover:opacity-80 transition font-medium">Login</a>
+                    <a href="{{ url_for('register_page') }}" class="hover:opacity-80 transition font-medium">Register</a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobileMenuBtn" class="text-white focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-2">
+                <a href="{{ url_for('read_index') }}" class="block px-4 py-2 hover:bg-indigo-700 rounded transition">Home</a>
+                <a href="{{ url_for('login_page') }}" class="block px-4 py-2 hover:bg-indigo-700 rounded transition">Login</a>
+                <a href="{{ url_for('register_page') }}" class="block px-4 py-2 hover:bg-indigo-700 rounded transition">Register</a>
+            </div>
+        </div>
     </header>
 
-    <main>
+    <!-- Breadcrumbs -->
+    {% if breadcrumbs %}
+    <div class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                {% for crumb in breadcrumbs %}
+                    {% if not loop.last %}
+                        <a href="{{ crumb.url }}" class="text-indigo-600 hover:text-indigo-800 transition">{{ crumb.name }}</a>
+                        <span class="text-gray-400">/</span>
+                    {% else %}
+                        <span class="text-gray-700 font-medium">{{ crumb.name }}</span>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
-        <p>&copy; 2025 Calculations App. All rights reserved.</p>
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-white font-bold mb-4 flex items-center space-x-2">
+                        <i class="fas fa-calculator text-indigo-400"></i>
+                        <span>NumeriLogic</span>
+                    </h3>
+                    <p class="text-sm">Advanced calculation management and analysis platform.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{{ url_for('read_index') }}" class="hover:text-indigo-400 transition">Home</a></li>
+                        <li><a href="{{ url_for('login_page') }}" class="hover:text-indigo-400 transition">Login</a></li>
+                        <li><a href="{{ url_for('register_page') }}" class="hover:text-indigo-400 transition">Register</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-indigo-400 transition">Documentation</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8">
+                <p class="text-center text-sm">&copy; 2025 NumeriLogic. All rights reserved.</p>
+            </div>
+        </div>
     </footer>
 
     <script src="{{ url_for('static', path='js/script.js') }}"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+    </script>
 </body>
 </html>
