@@ -11,9 +11,6 @@ A FastAPI web app for calculations with user authentication and profile manageme
 ### Setup
 
 1. **Navigate to project:**
-```bash
-cd /home/saketh/IS601/module12
-```
 
 2. **Create virtual environment:**
 ```bash
@@ -52,12 +49,6 @@ pytest --cov=app tests/
 - User profile settings (update username, email, password)
 - Responsive UI with Tailwind CSS
 
-## Test Coverage
-
-- 27 passing tests with 62% code coverage
-- Unit tests for all calculation types
-- Integration tests for authentication and routes
-- Automated tests via GitHub Actions
 
 ## Docker Hub Link
 https://hub.docker.com/repository/docker/saketh008/is601_module12/general
