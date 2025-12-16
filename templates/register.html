@@ -80,6 +80,7 @@
             <input type="password" id="password" name="password" required
                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition"
                    placeholder="Enter a strong password">
+            <p class="text-xs text-gray-600 mt-2">Must contain: 8+ characters, uppercase, lowercase, number, special character (!@#$%^&*)</p>
           </div>
 
           <!-- Confirm Password -->
@@ -152,7 +153,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return password.length >= 8 && 
                /[A-Z]/.test(password) && 
                /[a-z]/.test(password) && 
-               /[0-9]/.test(password); 
+               /[0-9]/.test(password) &&
+               /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password);
     }
 
     form.addEventListener('submit', async function(e) {
@@ -183,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (!isValidPassword(formData.password)) {
-            showError('Password must be at least 8 characters long and contain uppercase, lowercase, and numbers');
+            showError('Password must be at least 8 characters long and contain uppercase, lowercase, numbers, and a special character (!@#$%^&*()_+-=[]{}|;:,.<>?)');
             return;
         }
 

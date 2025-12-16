@@ -76,6 +76,11 @@
                                         <option value="subtraction">➖ Subtraction</option>
                                         <option value="multiplication">✖️ Multiplication</option>
                                         <option value="division">➗ Division</option>
+                                        <option value="modulus">🔢 Modulus</option>
+                                        <option value="sin">📐 Sine</option>
+                                        <option value="cos">📐 Cosine</option>
+                                        <option value="tan">📐 Tangent</option>
+                                        <option value="exponential">📈 Exponential (e^x)</option>
                                     </select>
                                 </div>
 
@@ -210,7 +215,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 .map(num => parseFloat(num.trim()))
                 .filter(num => !isNaN(num));
 
-            if (inputs.length < 2) {
+            const trigFunctions = ['sin', 'cos', 'tan', 'exponential'];
+            const minInputs = trigFunctions.includes(type) ? 1 : 2;
+
+            if (inputs.length < minInputs) {
                 document.getElementById('newResultPreview').textContent = '-';
                 return;
             }
@@ -228,6 +236,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'division':
                     result = inputs.reduce((a, b) => a / b);
+                    break;
+                case 'modulus':
+                    result = inputs.reduce((a, b) => a % b);
+                    break;
+                case 'sin':
+                    result = Math.sin(inputs[0]);
+                    break;
+                case 'cos':
+                    result = Math.cos(inputs[0]);
+                    break;
+                case 'tan':
+                    result = Math.tan(inputs[0]);
+                    break;
+                case 'exponential':
+                    result = Math.exp(inputs[0]);
                     break;
                 default:
                     result = 0;
@@ -270,8 +293,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .map(num => parseFloat(num.trim()))
             .filter(num => !isNaN(num));
 
-        if (inputs.length < 2) {
-            showAlertError('Please enter at least two valid numbers');
+        const calcType = document.getElementById('calcType').value;
+        const trigFunctions = ['sin', 'cos', 'tan', 'exponential'];
+        const minInputs = trigFunctions.includes(calcType) ? 1 : 2;
+
+        if (inputs.length < minInputs) {
+            const inputWord = trigFunctions.includes(calcType) ? 'one' : 'two';
+            showAlertError(`Please enter at least ${inputWord} valid number(s)`);
             return;
         }
 
