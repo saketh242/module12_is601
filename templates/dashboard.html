@@ -63,6 +63,12 @@
                                 <option value="subtraction">➖ Subtraction</option>
                                 <option value="multiplication">✖️ Multiplication</option>
                                 <option value="division">➗ Division</option>
+                                <option value="modulus">🔢 Modulus</option>
+                                <option value="power">💪 Power (x^y)</option>
+                                <option value="sin">📐 Sine</option>
+                                <option value="cos">📐 Cosine</option>
+                                <option value="tan">📐 Tangent</option>
+                                <option value="exponential">📈 Exponential (e^x)</option>
                             </select>
                         </div>
                         <div>
@@ -246,8 +252,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .map(num => parseFloat(num.trim()))
             .filter(num => !isNaN(num));
 
-        if (inputs.length < 2) {
-            showError('Please enter at least two valid numbers');
+        const calcType = document.getElementById('calcType').value;
+        const trigFunctions = ['sin', 'cos', 'tan', 'exponential'];
+        const minInputs = trigFunctions.includes(calcType) ? 1 : 2;
+
+        if (inputs.length < minInputs) {
+            const inputWord = trigFunctions.includes(calcType) ? 'one' : 'two';
+            showError(`Please enter at least ${inputWord} valid number(s)`);
             return;
         }
 

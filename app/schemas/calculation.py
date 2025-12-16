@@ -9,18 +9,24 @@ class CalculationType(str, Enum):
     SUBTRACTION = "subtraction"
     MULTIPLICATION = "multiplication"
     DIVISION = "division"
+    MODULUS = "modulus"
+    SIN = "sin"
+    COS = "cos"
+    TAN = "tan"
+    EXPONENTIAL = "exponential"
+    POWER = "power"
 
 class CalculationBase(BaseModel):
     type: CalculationType = Field(
         ...,
-        description="Type of calculation (addition, subtraction, multiplication, division)",
+        description="Type of calculation (addition, subtraction, multiplication, division, modulus, sin, cos, tan, exponential, power)",
         example="addition"
     )
     inputs: List[float] = Field(
         ...,
         description="List of numeric inputs for the calculation",
         example=[10.5, 3, 2],
-        min_items=2
+        min_items=1
     )
 
     @field_validator("type", mode="before")
@@ -40,11 +46,22 @@ class CalculationBase(BaseModel):
 
     @model_validator(mode='after')
     def validate_inputs(self) -> "CalculationBase":
-        if len(self.inputs) < 2:
-            raise ValueError("At least two numbers are required for calculation")
+        # Trigonometric and exponential functions only need 1+ inputs
+        trig_functions = {CalculationType.SIN, CalculationType.COS, CalculationType.TAN, CalculationType.EXPONENTIAL}
+        if self.type in trig_functions:
+            if len(self.inputs) < 1:
+                raise ValueError("At least one number is required for this calculation")
+        else:
+            # Other operations need at least 2 inputs
+            if len(self.inputs) < 2:
+                raise ValueError("At least two numbers are required for calculation")
+        
         if self.type == CalculationType.DIVISION:
             if any(x == 0 for x in self.inputs[1:]):
                 raise ValueError("Cannot divide by zero")
+        elif self.type == CalculationType.MODULUS:
+            if any(x == 0 for x in self.inputs[1:]):
+                raise ValueError("Cannot perform modulus with zero")
         return self
 
     model_config = ConfigDict(
@@ -84,7 +101,7 @@ class CalculationUpdate(BaseModel):
         None,
         description="Updated list of numeric inputs for the calculation",
         example=[42, 7],
-        min_items=2
+        min_items=1
     )
 
     @field_validator("type", mode="before")
@@ -99,11 +116,22 @@ class CalculationUpdate(BaseModel):
 
     @model_validator(mode='after')
     def validate_inputs(self) -> "CalculationUpdate":
-        if self.inputs is not None and len(self.inputs) < 2:
-            raise ValueError("At least two numbers are required for calculation")
+        # Trigonometric and exponential functions only need 1+ inputs
+        trig_functions = {CalculationType.SIN, CalculationType.COS, CalculationType.TAN, CalculationType.EXPONENTIAL}
+        if self.inputs is not None:
+            if self.type in trig_functions:
+                if len(self.inputs) < 1:
+                    raise ValueError("At least one number is required for this calculation")
+            else:
+                if len(self.inputs) < 2:
+                    raise ValueError("At least two numbers are required for calculation")
+        
         if self.type == CalculationType.DIVISION and self.inputs is not None:
             if any(x == 0 for x in self.inputs[1:]):
                 raise ValueError("Cannot divide by zero")
+        elif self.type == CalculationType.MODULUS and self.inputs is not None:
+            if any(x == 0 for x in self.inputs[1:]):
+                raise ValueError("Cannot perform modulus with zero")
         return self
 
     model_config = ConfigDict(

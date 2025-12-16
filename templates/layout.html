@@ -27,8 +27,14 @@
                 <!-- Main Navigation -->
                 <nav class="hidden md:flex items-center space-x-6">
                     <a href="{{ url_for('read_index') }}" class="hover:opacity-80 transition font-medium">Home</a>
-                    <a href="{{ url_for('login_page') }}" class="hover:opacity-80 transition font-medium">Login</a>
-                    <a href="{{ url_for('register_page') }}" class="hover:opacity-80 transition font-medium">Register</a>
+                    <a href="{{ url_for('login_page') }}" class="hover:opacity-80 transition font-medium" id="navLogin">Login</a>
+                    <a href="{{ url_for('register_page') }}" class="hover:opacity-80 transition font-medium" id="navRegister">Register</a>
+                    <a href="{{ url_for('settings_page') }}" class="hover:opacity-80 transition font-medium hidden" id="navSettings">
+                        <i class="fas fa-cog mr-1"></i>Settings
+                    </a>
+                    <button id="navLogout" class="hidden bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded font-medium transition">
+                        <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                    </button>
                 </nav>
 
                 <!-- Mobile Menu Button -->
@@ -42,8 +48,14 @@
             <!-- Mobile Menu -->
             <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-2">
                 <a href="{{ url_for('read_index') }}" class="block px-4 py-2 hover:bg-indigo-700 rounded transition">Home</a>
-                <a href="{{ url_for('login_page') }}" class="block px-4 py-2 hover:bg-indigo-700 rounded transition">Login</a>
-                <a href="{{ url_for('register_page') }}" class="block px-4 py-2 hover:bg-indigo-700 rounded transition">Register</a>
+                <a href="{{ url_for('login_page') }}" class="block px-4 py-2 hover:bg-indigo-700 rounded transition" id="mobileNavLogin">Login</a>
+                <a href="{{ url_for('register_page') }}" class="block px-4 py-2 hover:bg-indigo-700 rounded transition" id="mobileNavRegister">Register</a>
+                <a href="{{ url_for('settings_page') }}" class="block px-4 py-2 hover:bg-indigo-700 rounded transition hidden" id="mobileNavSettings">
+                    <i class="fas fa-cog mr-2"></i>Settings
+                </a>
+                <button id="mobileNavLogout" class="hidden w-full text-left block px-4 py-2 hover:bg-red-700 rounded transition bg-red-600 text-white font-medium">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                </button>
             </div>
         </div>
     </header>
@@ -104,6 +116,46 @@
             </div>
         </div>
     </footer>
+
+    <script>
+    // Update navigation based on authentication status
+    document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem('access_token');
+        
+        if (token) {
+            // User is logged in - show Settings and Logout, hide Login and Register
+            document.getElementById('navLogin')?.classList.add('hidden');
+            document.getElementById('navRegister')?.classList.add('hidden');
+            document.getElementById('navSettings')?.classList.remove('hidden');
+            document.getElementById('navLogout')?.classList.remove('hidden');
+            
+            document.getElementById('mobileNavLogin')?.classList.add('hidden');
+            document.getElementById('mobileNavRegister')?.classList.add('hidden');
+            document.getElementById('mobileNavSettings')?.classList.remove('hidden');
+            document.getElementById('mobileNavLogout')?.classList.remove('hidden');
+        }
+        
+        // Logout handlers
+        const logoutButtons = document.querySelectorAll('#navLogout, #mobileNavLogout');
+        logoutButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                }
+            });
+        });
+        
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    });
+    </script>
 
     <script src="{{ url_for('static', path='js/script.js') }}"></script>
     <script>

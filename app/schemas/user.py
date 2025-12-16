@@ -194,3 +194,43 @@ class PasswordUpdate(BaseModel):
             }
         }
     )
+
+class ProfileUpdate(BaseModel):
+    """Schema for updating user profile (username, email, and optional password)"""
+    username: Optional[str] = Field(
+        None,
+        min_length=3,
+        max_length=50,
+        example="newusername",
+        description="New username (optional)"
+    )
+    email: Optional[EmailStr] = Field(
+        None,
+        example="newemail@example.com",
+        description="New email address (optional)"
+    )
+    current_password: str = Field(
+        ...,
+        min_length=8,
+        max_length=128,
+        example="CurrentPass123!",
+        description="Current password (required for security)"
+    )
+    new_password: Optional[str] = Field(
+        None,
+        min_length=8,
+        max_length=128,
+        example="NewPass123!",
+        description="New password (optional)"
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "username": "newusername",
+                "email": "newemail@example.com",
+                "current_password": "CurrentPass123!",
+                "new_password": "NewPass123!"
+            }
+        }
+    )

@@ -1,6 +1,7 @@
 
 from datetime import datetime
 import uuid
+import math
 from typing import List
 from sqlalchemy import Column, String, DateTime, ForeignKey, JSON, Float
 from sqlalchemy.dialects.postgresql import UUID
@@ -82,6 +83,12 @@ class AbstractCalculation:
             'subtraction': Subtraction,
             'multiplication': Multiplication,
             'division': Division,
+            'modulus': Modulus,
+            'sin': Sin,
+            'cos': Cos,
+            'tan': Tan,
+            'exponential': Exponential,
+            'power': Power,
         }
         calculation_class = calculation_classes.get(calculation_type.lower())
         if not calculation_class:
@@ -151,3 +158,83 @@ class Division(Calculation):
                 raise ValueError("Cannot divide by zero.")
             result /= value
         return result
+
+class Modulus(Calculation):
+    __mapper_args__ = {"polymorphic_identity": "modulus"}
+
+    def get_result(self) -> float:
+        if not isinstance(self.inputs, list):
+            raise ValueError("Inputs must be a list of numbers.")
+        if len(self.inputs) < 2:
+            raise ValueError("Inputs must be a list with at least two numbers.")
+        result = self.inputs[0]
+        for value in self.inputs[1:]:
+            if value == 0:
+                raise ValueError("Cannot perform modulus with zero.")
+            result = result % value
+        return result
+
+class Sin(Calculation):
+    __mapper_args__ = {"polymorphic_identity": "sin"}
+
+    def get_result(self) -> float:
+        if not isinstance(self.inputs, list):
+            raise ValueError("Inputs must be a list of numbers.")
+        if len(self.inputs) < 1:
+            raise ValueError("At least one number is required for sine calculation.")
+        # Sum all inputs and take sine of the result
+        total = sum(self.inputs)
+        return math.sin(math.radians(total))
+
+class Cos(Calculation):
+    __mapper_args__ = {"polymorphic_identity": "cos"}
+
+    def get_result(self) -> float:
+        if not isinstance(self.inputs, list):
+            raise ValueError("Inputs must be a list of numbers.")
+        if len(self.inputs) < 1:
+            raise ValueError("At least one number is required for cosine calculation.")
+        # Sum all inputs and take cosine of the result
+        total = sum(self.inputs)
+        return math.cos(math.radians(total))
+
+class Tan(Calculation):
+    __mapper_args__ = {"polymorphic_identity": "tan"}
+
+    def get_result(self) -> float:
+        if not isinstance(self.inputs, list):
+            raise ValueError("Inputs must be a list of numbers.")
+        if len(self.inputs) < 1:
+            raise ValueError("At least one number is required for tangent calculation.")
+        # Sum all inputs and take tangent of the result
+        total = sum(self.inputs)
+        angle_radians = math.radians(total)
+        # Check if cos(angle) is close to 0
+        if abs(math.cos(angle_radians)) < 1e-10:
+            raise ValueError("Tangent is undefined at this angle.")
+        return math.tan(angle_radians)
+
+class Exponential(Calculation):
+    __mapper_args__ = {"polymorphic_identity": "exponential"}
+
+    def get_result(self) -> float:
+        if not isinstance(self.inputs, list):
+            raise ValueError("Inputs must be a list of numbers.")
+        if len(self.inputs) < 1:
+            raise ValueError("At least one number is required for exponential calculation.")
+        # For multiple inputs, calculate e^(sum of inputs)
+        total = sum(self.inputs)
+        return math.exp(total)
+
+class Power(Calculation):
+    __mapper_args__ = {"polymorphic_identity": "power"}
+
+    def get_result(self) -> float:
+        if not isinstance(self.inputs, list):
+            raise ValueError("Inputs must be a list of numbers.")
+        if len(self.inputs) < 2:
+            raise ValueError("At least two numbers are required for power calculation.")
+        # Calculate first number to the power of second number
+        base = self.inputs[0]
+        exponent = self.inputs[1]
+        return base ** exponent
