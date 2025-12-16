@@ -88,6 +88,7 @@ class AbstractCalculation:
             'cos': Cos,
             'tan': Tan,
             'exponential': Exponential,
+            'power': Power,
         }
         calculation_class = calculation_classes.get(calculation_type.lower())
         if not calculation_class:

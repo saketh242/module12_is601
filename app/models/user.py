@@ -54,6 +54,10 @@ class User(Base):
         from app.auth.jwt import verify_password
         return verify_password(plain_password, self.password)
 
+    def set_password(self, plain_password: str):
+        """Hash and set a new password"""
+        self.password = self.hash_password(plain_password)
+
     @classmethod
     def hash_password(cls, password: str) -> str:
         from app.auth.jwt import get_password_hash

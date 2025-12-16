@@ -77,6 +77,7 @@
                                         <option value="multiplication">✖️ Multiplication</option>
                                         <option value="division">➗ Division</option>
                                         <option value="modulus">🔢 Modulus</option>
+                                        <option value="power">💪 Power (x^y)</option>
                                         <option value="sin">📐 Sine</option>
                                         <option value="cos">📐 Cosine</option>
                                         <option value="tan">📐 Tangent</option>
@@ -216,7 +217,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 .filter(num => !isNaN(num));
 
             const trigFunctions = ['sin', 'cos', 'tan', 'exponential'];
-            const minInputs = trigFunctions.includes(type) ? 1 : 2;
+            const twoInputFunctions = ['power'];
+            let minInputs = 2;
+            
+            if (trigFunctions.includes(type)) {
+                minInputs = 1;
+            } else if (twoInputFunctions.includes(type)) {
+                minInputs = 2;
+            }
 
             if (inputs.length < minInputs) {
                 document.getElementById('newResultPreview').textContent = '-';
@@ -239,6 +247,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'modulus':
                     result = inputs.reduce((a, b) => a % b);
+                    break;
+                case 'power':
+                    result = inputs[0] ** inputs[1];
                     break;
                 case 'sin':
                     result = Math.sin(inputs[0]);

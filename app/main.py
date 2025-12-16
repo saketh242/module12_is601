@@ -18,7 +18,7 @@ from app.models.calculation import Calculation
 from app.models.user import User
 from app.schemas.calculation import CalculationBase, CalculationResponse, CalculationUpdate
 from app.schemas.token import TokenResponse
-from app.schemas.user import UserCreate, UserResponse, UserLogin
+from app.schemas.user import UserCreate, UserResponse, UserLogin, ProfileUpdate
 from app.database import Base, get_db, engine
 
 
@@ -62,6 +62,10 @@ def view_calculation_page(request: Request):
 @app.get("/edit-calculation", response_class=HTMLResponse, tags=["web"])
 def edit_calculation_page(request: Request):
     return templates.TemplateResponse("edit_calculation.html", {"request": request})
+
+@app.get("/settings", response_class=HTMLResponse, tags=["web"])
+def settings_page(request: Request):
+    return templates.TemplateResponse("settings.html", {"request": request})
 
 
 @app.get("/health", tags=["health"])
@@ -136,6 +140,66 @@ def login_form(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = D
         "access_token": auth_result["access_token"],
         "token_type": "bearer"
     }
+
+@app.put("/auth/profile", response_model=UserResponse, tags=["auth"])
+def update_profile(
+    profile_data: ProfileUpdate,
+    current_user = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """Update user profile (username, email, and password)"""
+    try:
+        # Verify current password
+        user = db.query(User).filter(User.id == current_user.id).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        if not user.verify_password(profile_data.current_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Current password is incorrect"
+            )
+        
+        # Update username if provided and not already taken
+        if profile_data.username and profile_data.username != user.username:
+            existing = db.query(User).filter(User.username == profile_data.username).first()
+            if existing:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Username already taken"
+                )
+            user.username = profile_data.username
+        
+        # Update email if provided and not already taken
+        if profile_data.email and profile_data.email != user.email:
+            existing = db.query(User).filter(User.email == profile_data.email).first()
+            if existing:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Email already in use"
+                )
+            user.email = profile_data.email
+        
+        # Update password if provided
+        if profile_data.new_password:
+            user.set_password(profile_data.new_password)
+        
+        db.commit()
+        db.refresh(user)
+        return user
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
 
 
 @app.post(
